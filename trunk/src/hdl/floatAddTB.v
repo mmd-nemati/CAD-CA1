@@ -7,18 +7,12 @@ module floatAddTB();
     wire [31:0] sum;
     reg clk;
 
-    // Instantiate the floatAdder module
-//     FloatingPointAddSub u1 (
-//         a, b, sum
-//     );
         floatAdder u2(a, b, sum);
 
-    // Clock generation
     always begin
         #5 clk = ~clk;
     end
 
-    // Test cases
     initial begin
         clk = 0;
         // Test case 1: 1.0 + 2.0 = 3.0

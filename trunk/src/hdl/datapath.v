@@ -7,7 +7,8 @@ module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes, 
         // read the weight from file which is in IEEE 754 float format
         reg [31:0] weights [3:0][3:0];
         initial begin
-                $readmemh("trunk/sim/file/weights.dat", weights);
+                $readmemh("./file/weights.dat", weights);
+                // $readmemh("trunk/sim/file/weights.dat", weights);
         end
 
         // registers to hold the initial values of x
@@ -53,7 +54,7 @@ module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes, 
         output Done;
         assign Done = ({2'b0, zero1} + {2'b0, zero2} + {2'b0, zero3} + {2'b0, zero4}) == 3'b011;
 
-        // Encoding
+        // encoding
         wire [1:0] sig;
         encoder encdr({zero1, zero2, zero3, zero4}, sig);
 

@@ -10,7 +10,18 @@ module floatMultiplier(a, b, product);
         reg aSign,bSign, resSign;
 
         always @(a, b) begin
-                if (a == 32'b0 || b == 32'b0) begin
+                // check for NaN
+                if ((a[30:23] == 8'hFF && a[22:0] != 0) || (b[30:23] == 8'hFF && b[22:0] != 0)) begin
+                        product = 32'b0;
+                        $display("ERROR: NaN detected");
+                end
+                // check for Infinity
+                else if ((a[30:23] == 8'hFF && a[22:0] == 0) || (b[30:23] == 8'hFF && b[22:0] == 0)) begin
+                        product = 32'b0;
+                        $display("ERROR: Infinity detected");
+                end
+                // check zero
+                else if (a == 32'b0 || b == 32'b0) begin
                         product = 32'b0;
                 end
                 else begin

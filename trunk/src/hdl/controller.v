@@ -6,9 +6,9 @@
 `define E 3'd5
 `define F 6'd6
 
-module controller(rst, clk, ldI, ldInit, ldM, ldRes, ldA, Done);
+module controller(rst, clk, start, ldI, ldInit, ldM, ldRes, ldA, Done);
 
-    input rst, clk, Done;
+    input rst, clk, start, Done;
     output reg ldI, ldInit, ldM, ldRes, ldA;
 
     reg [2:0] ps, ns;
@@ -25,7 +25,7 @@ module controller(rst, clk, ldI, ldInit, ldM, ldRes, ldA, Done);
     always @(*) begin
         // {ldI, ldInit, ldM, ldRes, ldA} = 5'b0;
         case (ps)
-            `idle : ns = (rst) ? `A : `idle;
+            `idle : ns = (start) ? `A : `idle;
             `A : ns = `B;
             `B : ns = `C;
             `C : ns = `D;

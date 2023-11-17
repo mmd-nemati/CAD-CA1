@@ -10,7 +10,18 @@ module floatAdder(a, b, sum);
         reg comp;
         reg [7:0] alignExp;
         always @(a, b) begin
-                if (a == 32'b0) begin
+                // check for NaN
+                if ((a[30:23] == 8'hFF && a[22:0] != 0) || (b[30:23] == 8'hFF && b[22:0] != 0)) begin
+                        sum = 32'b0;
+                        $display("ERROR: NaN detected");
+                end
+                // check for Infinity
+                else if ((a[30:23] == 8'hFF && a[22:0] == 0) || (b[30:23] == 8'hFF && b[22:0] == 0)) begin
+                        sum = 32'b0;
+                        $display("ERROR: Infinity detected");
+                end
+                // check zero
+                else if (a == 32'b0) begin
                         sum = b;
                         // break;
                 end
