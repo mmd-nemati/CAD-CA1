@@ -1,4 +1,4 @@
-module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes max, Done)
+module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes, max, Done);
         input clk, rst, ldI, ldA, ldInit, ldM, ldRes;
         input [31:0] inp1, inp2, inp3, inp4;
 
@@ -7,7 +7,7 @@ module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes m
         // read the weight from file which is in IEEE 754 float format
         reg [31:0] weights [3:0][3:0];
         initial begin
-                $readmemh("../../sim/file/weights.dat", weights);
+                $readmemh("trunk/sim/file/weights.dat", weights);
         end
 
         // registers to hold the initial values of x
@@ -55,7 +55,7 @@ module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes m
 
         // Encoding
         wire [1:0] sig;
-        endcoder encdr({zero1, zero2, zero3, zero4}, sig);
+        encoder encdr({zero1, zero2, zero3, zero4}, sig);
 
         // maximum multiplexer
         output [31:0] max;

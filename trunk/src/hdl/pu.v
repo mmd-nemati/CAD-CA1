@@ -1,16 +1,16 @@
-module pu(clk, rst, ldM, ldRes, a1, a2, a3, a4, w1, w1, w3, w4, aOut)
+module pu(clk, rst, ldM, ldRes, a1, a2, a3, a4, w1, w2, w3, w4, aOut);
         input clk, rst, ldM, ldRes;
-        input [31:0] a1, a2, a3, a4, w1, w1, w3, w4;
+        input [31:0] a1, a2, a3, a4, w1, w2, w3, w4;
         output [31:0] aOut;
 
         wire [31:0] mul1, mul2, mul3, mul4;
         wire [31:0] mulRegOut1, mulRegOut2, mulRegOut3, mulRegOut4;
 
         ///////////////////////// zarb ha bayad dorost beshan
-        assign mul1 = a1 * w1;
-        assign mul2 = a2 * w2;
-        assign mul3 = a3 * w3;
-        assign mul4 = a4 * w4;
+        floatMultiplier flmul1(a1, w1, mul1);
+        floatMultiplier flmul2(a2, w2, mul2);
+        floatMultiplier flmul3(a3, w3, mul3);
+        floatMultiplier flmul4(a4, w4, mul4);
 
         // multiplication result registers
         reg32B mulReg1(clk, rst, ldM, mul1, mulRegOut1);
@@ -32,5 +32,5 @@ module pu(clk, rst, ldM, ldRes, a1, a2, a3, a4, w1, w1, w3, w4, aOut)
         reg32B finalReg(clk, rst, ldRes, secondAddersOut, finalRegOut);
 
         // output ----> is logic correct?
-        assign aOut = (finalRegOut[31] == 1'b1) 32'b0 : finalRegOut;
+        assign aOut = (finalRegOut[31] == 1'b1) ? 32'b0 : finalRegOut;
 endmodule

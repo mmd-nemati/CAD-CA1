@@ -1,5 +1,5 @@
-module mux4(in1, in2, in3, in4, sl, out)
-        input [31:0] in1, in2, in3;
+module mux4(in1, in2, in3, in4, sl, out);
+        input [31:0] in1, in2, in3, in4;
         input [1:0] sl;
         output [31:0] out;
 

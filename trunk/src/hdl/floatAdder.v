@@ -1,64 +1,59 @@
-module floatAdder(a, b,sum);
-        input [31:0] a,
-        input [31:0] b,
-        output [31:0] sum
-        
-        reg [7:0] a_exp, b_exp, sum_exp;
-        reg [22:0] a_mant, b_mant, sum_mant;
-        reg a_sign, b_sign, sum_sign;
-        reg [23:0] aligned_mant_a, aligned_mant_b;
-        reg [8:0] exp_diff;
-        reg [24:0] add_result;
-        reg overflow;
+module floatAdder(a, b, sum);
 
-        always (a, b) begin
-                a_sign = a[31];
-                a_exp = a[30:23];
-                a_mant = a[22:0];
-
-                b_sign = b[31];
-                b_exp = b[30:23];
-                b_mant = b[22:0];
-
-                if(a_exp > b_exp) begin
-                        exp_diff = a_exp - b_exp;
-                        aligned_mant_a = {1'b1, a_mant};
-                        aligned_mant_b = {1'b1, b_mant} >> exp_diff;
-                        sum_exp = a_exp;
+        input [31:0] a, b;
+        output reg [31:0] sum;
+        reg [23:0] aMant, bMant, tmpMant;
+        reg [22:0] resMant;
+        reg [7:0] aExp, bExp, diffExp, resExp;
+        reg aSign, bSign, resSign;
+        reg carry;
+        reg comp;
+        reg [7:0] alignExp;
+        always @(a, b) begin
+                if (a == 32'b0) begin
+                        sum = b;
+                        // break;
+                end
+                else if (b == 32'b0) begin
+                        sum = a;
                 end
                 else begin
-                        exp_diff = b_exp - a_exp;
-                        aligned_mant_a = {1'b1, a_mant} >> exp_diff;
-                        aligned_mant_b = {1'b1, b_mant};
-                        sum_exp = b_exp;
-                end
+                        if (a[30:23] > b[30:23]) begin
+                                comp = 1'b1;
+                        end
+                        else if (a[30:23] == b[30:23]) begin
+                                comp = (a[22:0] > b[22:0])? 1'b1 : 1'b0;
+                        end
+                        else if (a[30:23] < b[30:23]) begin
+                                comp = 1'b0;
+                        end
+                        aSign = comp ? a[31] : b[31];
+                        aExp = comp ? a[30:23] : b[30:23];
+                        aMant = comp ? {1'b1, a[22:0]} : {1'b1, b[22:0]};
+                        
+                        bSign = comp ? b[31] : a[31];
+                        bExp = comp ? b[30:23] : a[30:23];
+                        bMant = comp ? {1'b1, b[22:0]} : {1'b1, a[22:0]};
 
-                if(a_sign == b_sign) begin
-                        add_result = aligned_mant_a + aligned_mant_b;
-                        sum_sign = a_sign;
-                        overflow = add_result[24];
-                end 
-                else if(aligned_mant_a > aligned_mant_b) begin
-                        add_result = aligned_mant_a - aligned_mant_b;
-                        sum_sign = a_sign;
-                        overflow = 0;
-                end
-                else begin
-                        add_result = aligned_mant_b - aligned_mant_a;
-                        sum_sign = b_sign;
-                        overflow = 0;
-                end
+                        diffExp = aExp - bExp;
+                        bMant = (bMant >> diffExp);
+                        {carry, tmpMant} =  (aSign ~^ bSign) ? aMant +  bMant : aMant- bMant ; 
+                        alignExp = aExp;
 
-                if(overflow) begin
-                        sum_mant = add_result[23:1];
-                        sum_exp = sum_exp + 1;
+                        if (carry) begin
+                                alignExp = alignExp + 1'b1;
+                                tmpMant = tmpMant >> 1;
+                        end
+                        else begin
+                                while (!tmpMant[23]) begin
+                                        alignExp =  alignExp - 1'b1;
+                                        tmpMant = tmpMant << 1;
+                                end
+                        end
+                        resSign = aSign;
+                        resMant = tmpMant[22:0];
+                        resExp = alignExp;
+                        sum = {resSign, resExp, resMant};
                 end
-                else begin
-                        sum_mant = add_result[22:0];
-                end
-    end
-
-//     always @(posedge clk) begin
-        assign sum <= {sum_sign, sum_exp, sum_mant};
-//     end
+        end
 endmodule
