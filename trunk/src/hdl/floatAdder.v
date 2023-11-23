@@ -48,7 +48,7 @@ module floatAdder(a, b, sum);
 
                         diffExp = aExp - bExp;
                         bMant = (bMant >> diffExp);
-                        {carry, tmpMant} =  (aSign ~^ bSign) ? aMant +  bMant : aMant- bMant ; 
+                        {carry, tmpMant} =  (aSign ~^ bSign) ? aMant +  bMant : aMant - bMant ; 
                         alignExp = aExp;
 
                         if (carry) begin
@@ -56,7 +56,7 @@ module floatAdder(a, b, sum);
                                 tmpMant = tmpMant >> 1;
                         end
                         else begin
-                                while (!tmpMant[23]) begin
+                                while (!tmpMant[23] && alignExp != 0) begin
                                         alignExp =  alignExp - 1'b1;
                                         tmpMant = tmpMant << 1;
                                 end

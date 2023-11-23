@@ -6,7 +6,6 @@ module pu(clk, rst, ldM, ldRes, a1, a2, a3, a4, w1, w2, w3, w4, aOut);
         wire [31:0] mul1, mul2, mul3, mul4;
         wire [31:0] mulRegOut1, mulRegOut2, mulRegOut3, mulRegOut4;
 
-        ///////////////////////// zarb ha bayad dorost beshan
         floatMultiplier flmul1(a1, w1, mul1);
         floatMultiplier flmul2(a2, w2, mul2);
         floatMultiplier flmul3(a3, w3, mul3);
@@ -19,18 +18,18 @@ module pu(clk, rst, ldM, ldRes, a1, a2, a3, a4, w1, w2, w3, w4, aOut);
         reg32B mulReg4(clk, rst, ldM, mul4, mulRegOut4);
         
         // first layer of adders
-        wire [31:0] firstAddersOut1, firstAddersOut2; // khroogi avalin laye adder ha
+        wire [31:0] firstAddersOut1, firstAddersOut2; 
         floatAdder fira1(mulRegOut1, mulRegOut2, firstAddersOut1);
         floatAdder fira2(mulRegOut3, mulRegOut4, firstAddersOut2);
 
         // second layer of adder
-        wire [31:0] secondAddersOut; // khroogi dovomin laye adder
+        wire [31:0] secondAddersOut;
         floatAdder seca2(firstAddersOut1, firstAddersOut2, secondAddersOut);
 
         // last register of the pu
         wire [31:0] finalRegOut;
         reg32B finalReg(clk, rst, ldRes, secondAddersOut, finalRegOut);
 
-        // output ----> is logic correct?
+        // output
         assign aOut = (finalRegOut[31] == 1'b1) ? 32'b0 : finalRegOut;
 endmodule

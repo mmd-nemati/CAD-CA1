@@ -1,6 +1,3 @@
-//module controller(rst, clk, ldI, ldInit, ldM, ldRes, ldA, Done);
-//module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes, max, Done);
-
 module neuralNetwork(clk, rst, start, inp1, inp2, inp3, inp4, max, Done);
 
         input clk, rst, start;

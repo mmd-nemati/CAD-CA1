@@ -19,8 +19,6 @@ module datapath(clk, rst, inp1, inp2, inp3, inp4, ldI, ldA, ldInit, ldM, ldRes, 
 
 
         // registers to hold activation values
-        // aOuts -> miran tooye pu ha
-        // aIn -> az pu ha mian
         wire[31:0] aIn1, aIn2, aIn3, aIn4;
         wire[31:0] aOut1, aOut2, aOut3, aOut4;
         reg32Activation a1(clk, rst, ldInit, ldA, initX1, aIn1, aOut1);
